@@ -21,8 +21,8 @@
 //	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //	SOFTWARE.
 
-#ifndef ILI9341_STM32_DRIVER_H
-#define ILI9341_STM32_DRIVER_H
+#ifndef ILI9341_H
+#define ILI9341_H
 
 #include "stdint.h"
 #include "global.h"
@@ -63,34 +63,42 @@
 #define BURST_MAX_SIZE 	16
 
 
+// Actual screen size depending on rotation
+extern volatile uint16_t LCD_HEIGHT;
+extern volatile uint16_t LCD_WIDTH;
+
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif // __cplusplus
-    
+
+    //---------------------//
+    // These platform-dependent function are external to library and must be implemented in a platform-specific driver file
     void ILI9341_SPI_Init(void);
     void ILI9341_SPI_Send(uint8_t data);
-    void ILI9341_Write_Command(uint8_t command);
-    void ILI9341_Write_Data(uint8_t data);
-    void ILI9341_Write_DataArray(uint8_t *data, uint32_t count);
-    void ILI9341_Set_Address(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+    void ILI9341_SPI_Write_Command(uint8_t command);
+    void ILI9341_SPI_Write_Data(uint8_t data);
+    void ILI9341_SPI_Write_DataArray(uint8_t *data, uint32_t count);
     void ILI9341_Reset(void);
-    void ILI9341_Set_Rotation(uint8_t Rotation);
-    void ILI9341_Enable(void);
-    void ILI9341_Init(void);
-    void ILI9341_Fill_Screen(uint16_t colour);
+
+    //---------------------//
+    // Interface
+    void ILI9341_Init(uint8_t rotation);
+    void ILI9341_Set_Rotation(uint8_t rotation);
+    void ILI9341_Set_Address(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
     void ILI9341_Draw_Colour(uint16_t colour);
-    void ILI9341_Draw_Pixel(uint16_t x, uint16_t y, uint16_t colour);
     void ILI9341_Draw_Colour_Burst(uint16_t colour, uint32_t size);
-
-
+    void ILI9341_Fill_Screen(uint16_t colour);
+    void ILI9341_Draw_Pixel(uint16_t x, uint16_t y, uint16_t colour);
     void ILI9341_Draw_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour);
     void ILI9341_Draw_Horizontal_Line(uint16_t x, uint16_t y, uint16_t width, uint16_t colour);
     void ILI9341_Draw_Vertical_Line(uint16_t x, uint16_t y, uint16_t height, uint16_t colour);
 	
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif
+#endif // ILI9341_H
 

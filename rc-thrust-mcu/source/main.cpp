@@ -3,8 +3,7 @@
 
 #include "global.h"
 
-#include "ILI9341_STM32_Driver.h"
-#include "ILI9341_GFX.h"
+#include "ILI9341.h"
 #include "lcd_lib.h"
 
 
@@ -117,7 +116,7 @@ int main()
 	MX_SPI1_Init();
 
 
-	ILI9341_Init();
+    ILI9341_Init(SCREEN_HORIZONTAL_2);
     
       while (1)
   {
@@ -134,7 +133,6 @@ int main()
 		ILI9341_Draw_Text("FPS TEST", 10, 200, GREEN, 1, BLACK); */
 	  //LCD_FillRectWH(0, 0, LCD_XSIZE, LCD_YSIZE);
 
-	  ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
 	  ILI9341_Fill_Screen(BLACK);
 
       LCD_SetFont(&font_h12);

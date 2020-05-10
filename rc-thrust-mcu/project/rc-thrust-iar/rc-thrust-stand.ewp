@@ -2066,10 +2066,16 @@
         <group>
             <name>ILI9341</name>
             <file>
-                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341_STM32_Driver.c</name>
+                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341_STM32_Driver.h</name>
+                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341_STM32_SPI.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\source\driver\ILI9341\ILI9341_STM32_SPI.h</name>
             </file>
         </group>
     </group>

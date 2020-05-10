@@ -32,10 +32,8 @@ HEADERS = \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
     ../../source/driver/ILI9341/5x5_font.h \
-    ../../source/driver/ILI9341/ILI9341_GFX.h \
-    ../../source/driver/ILI9341/ILI9341_STM32_Driver.h \
-    ../../source/driver/ILI9341/ILI9341_Touchscreen.h \
-    ../../source/driver/ILI9341/snow_tiger.h \
+    ../../source/driver/ILI9341/ILI9341.h \
+    ../../source/driver/ILI9341/ILI9341_STM32_SPI.h \
     ../../source/global.h \
     ../../source/lcd_lib/lcd_font_typedef.h \
     ../../source/lcd_lib/lcd_lib.h \
@@ -60,9 +58,8 @@ SOURCES = \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c \
-    ../../source/driver/ILI9341/ILI9341_GFX.c \
-    ../../source/driver/ILI9341/ILI9341_STM32_Driver.c \
-    ../../source/driver/ILI9341/ILI9341_Touchscreen.c \
+    ../../source/driver/ILI9341/ILI9341.c \
+    ../../source/driver/ILI9341/ILI9341_STM32_SPI.c \
     ../../source/lcd_lib/lcd_font_6x8_mono.c \
     ../../source/lcd_lib/lcd_font_h10.c \
     ../../source/lcd_lib/lcd_font_h10_bold.c \

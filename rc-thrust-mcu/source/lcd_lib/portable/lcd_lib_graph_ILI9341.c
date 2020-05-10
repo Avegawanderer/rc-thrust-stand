@@ -2,7 +2,7 @@
 
 #include "lcd_lib.h"
 #include "lcd_lib_private.h"
-#include "ILI9341_STM32_Driver.h"
+#include "ILI9341.h"
 
 
 
