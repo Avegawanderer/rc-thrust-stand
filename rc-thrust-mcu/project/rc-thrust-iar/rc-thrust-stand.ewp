@@ -2088,6 +2088,9 @@
             </file>
         </group>
         <file>
+            <name>$PROJ_DIR$\..\..\source\lcd_lib\lcd_font_12x16_mono.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\source\lcd_lib\lcd_font_6x8_mono.c</name>
         </file>
         <file>
@@ -2101,6 +2104,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\source\lcd_lib\lcd_font_h32.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\source\lcd_lib\lcd_font_h48.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\source\lcd_lib\lcd_font_typedef.h</name>

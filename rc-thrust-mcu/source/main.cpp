@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 #include "stm32f1xx_hal.h"
 
 #include "global.h"
@@ -100,10 +101,15 @@ void Error_Handler(void)
 {
     while(1);
 }
+
+
+int w_res;
   
   
 int main()
 {
+    char str[50];
+    
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
     
@@ -135,26 +141,38 @@ int main()
 
 	  ILI9341_Fill_Screen(BLACK);
 
-      LCD_SetFont(&font_h12);
+      LCD_SetFont(&font_12x16_mono);
       LCD_SetPenColor(CL_BLUE);
       LCD_SetPenMode(PEN_SOLID);
-      LCD_PrintString("Panel #1", 10, 10);
+      LCD_PrintString("Panel #1", 10, 0);
       LCD_SetPenColor(CL_RED);
       LCD_PrintString("Panel #2", 10, 25);
       LCD_SetPenColor(CL_YELLOW);
-      LCD_PrintString("Panel #2", 10, 50);
+      LCD_PrintString("Panel #3", 10, 50);
       LCD_SetPenColor(CL_GREEN);
-      LCD_PrintString("Panel #2", 10, 75);
+      LCD_PrintString("Panel #4", 10, 75);
 
-      LCD_SetFont(&font_h32);
-      LCD_PrintString("58", 100, 10);
+      LCD_SetFont(&font_h48);
+      LCD_PrintString("58063", 150, 0);
       
       LCD_SetPenColor(CL_YELLOW);
-      LCD_PrintString("42", 100, 50);
+      LCD_PrintString("42179", 150, 50);
       
       //ILI9341_Draw_Rectangle(0, 100, 300, 100, CL_RED);
+      
+      while(1)
+      {
+          ILI9341_Draw_Rectangle(10, 120, LCD_XSIZE-10, 16, CL_BLACK);
+          
+          sprintf(str, "%d", w_res);
+          LCD_SetFont(&font_12x16_mono);
+          LCD_SetPenColor(CL_GREEN);
+          LCD_PrintString(str, 10, 120);
 
-		HAL_Delay(2000);
+          HAL_Delay(200);
+          
+          w_res++;
+      }
   }
 	return 0;
 }

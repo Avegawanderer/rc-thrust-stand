@@ -61,10 +61,12 @@ SOURCES = \
     ../../source/driver/ILI9341/ILI9341.c \
     ../../source/driver/ILI9341/ILI9341_STM32_SPI.c \
     ../../source/lcd_lib/lcd_font_6x8_mono.c \
+    ../../source/lcd_lib/lcd_font_12x16_mono.c \
     ../../source/lcd_lib/lcd_font_h10.c \
     ../../source/lcd_lib/lcd_font_h10_bold.c \
     ../../source/lcd_lib/lcd_font_h12.c \
     ../../source/lcd_lib/lcd_font_h32.c \
+    ../../source/lcd_lib/lcd_font_h48.c \
     ../../source/lcd_lib/lcd_lib.c \
     ../../source/lcd_lib/lcd_lib_font.c \
     ../../source/lcd_lib/lcd_lib_graph.c \

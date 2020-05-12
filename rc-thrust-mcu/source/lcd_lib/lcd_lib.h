@@ -96,11 +96,14 @@ typedef struct {
 
 
 // Avaliable fonts (depending on actual files presence)
-extern const tFont font_h12;
-extern const tFont font_h32;
+extern const tFont font_6x8_mono;
+extern const tFont font_12x16_mono;
 extern const tFont font_h10;
 extern const tFont font_h10_bold;
-extern const tFont font_6x8_mono;
+extern const tFont font_h12;
+extern const tFont font_h32;
+extern const tFont font_h48;
+
 
 // Prototypes
 #ifdef __cplusplus

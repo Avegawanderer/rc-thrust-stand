@@ -1,7 +1,7 @@
 //	MIT License
 //
 //	Copyright (c) 2020 Alexey Borozdin
-//  Base on library by Matej Artnak, https://github.com/martnak/STM32-ILI9341
+//  Based on library by Matej Artnak, https://github.com/martnak/STM32-ILI9341
 //
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,11 @@
 #include "ILI9341.h"
 
 //----------- Definitions ----------//
+
+// Burst size does not make much difference since SPI is driven by core
+// It is OK to have burst size ~twice the SPI FIFO size
+#define BURST_MAX_SIZE 	16
+
 //----------- Variables ------------//
 
 volatile uint16_t LCD_HEIGHT = ILI9341_SCREEN_HEIGHT;
