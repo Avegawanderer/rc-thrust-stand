@@ -83,11 +83,10 @@ extern "C"
     void ILI9341_Init(uint8_t rotation);
     void ILI9341_Set_Rotation(uint8_t rotation);
     void ILI9341_Set_Address(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-    void ILI9341_Draw_Colour(uint16_t colour);
     void ILI9341_Draw_Colour_Burst(uint16_t colour, uint32_t size);
-    void ILI9341_Fill_Screen(uint16_t colour);
     void ILI9341_Draw_Pixel(uint16_t x, uint16_t y, uint16_t colour);
-    void ILI9341_Draw_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour);
+    void ILI9341_Fill_Screen(uint16_t colour);
+    void ILI9341_Fill_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour);
     void ILI9341_Draw_Horizontal_Line(uint16_t x, uint16_t y, uint16_t width, uint16_t colour);
     void ILI9341_Draw_Vertical_Line(uint16_t x, uint16_t y, uint16_t height, uint16_t colour);
 	

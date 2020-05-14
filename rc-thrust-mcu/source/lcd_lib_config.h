@@ -44,8 +44,8 @@
 #define LcdLibConfig_UseDefaultDrawHorLine		1
 #define LcdLibConfig_UseDefaultDrawVertLine		1
 #define LcdLibConfig_UseDefaultDrawRectP		1
-#define LcdLibConfig_UseDefaultFillRectP		1
-#define LcdLibConfig_UseDefaultDrawPackedImage  1
+#define LcdLibConfig_UseDefaultFillRectP		0
+#define LcdLibConfig_UseDefaultDrawPackedImage  0
 
 
 // Screen size definitions in pixels

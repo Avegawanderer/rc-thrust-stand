@@ -24,6 +24,7 @@
 
 #include "stm32f1xx_hal.h"
 #include "ILI9341.h"
+#include "ILI9341_STM32_SPI.h"
 
 //----------- Definitions ----------//
 
@@ -250,28 +251,17 @@ void ILI9341_Set_Address(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
     ILI9341_SPI_Write_Data(x1);
     ILI9341_SPI_Write_Data(x2 >> 8);
     ILI9341_SPI_Write_Data(x2);
-
     ILI9341_SPI_Write_Command(0x2B);
     ILI9341_SPI_Write_Data(y1 >> 8);
     ILI9341_SPI_Write_Data(y1);
     ILI9341_SPI_Write_Data(y2 >> 8);
     ILI9341_SPI_Write_Data(y2);
-
     ILI9341_SPI_Write_Command(0x2C);
 }
 
 
-// INTERNAL FUNCTION OF LIBRARY, USAGE NOT RECOMENDED, USE Draw_Pixel INSTEAD
-// Sends single pixel colour information to LCD
-void ILI9341_Draw_Colour(uint16_t colour)
-{
-    uint8_t TempBuffer[2] = {colour>>8, colour};
-    ILI9341_SPI_Write_DataArray(TempBuffer, 2);
-}
-
-
-// INTERNAL FUNCTION OF LIBRARY
-// Sends block colour information to LCD
+// Sends block of colour information to LCD
+// Address must be previously setup by ILI9341_Set_Address()
 void ILI9341_Draw_Colour_Burst(uint16_t colour, uint32_t size)
 {
     uint8_t burst_buffer[2 * BURST_MAX_SIZE];
@@ -295,8 +285,18 @@ void ILI9341_Draw_Colour_Burst(uint16_t colour, uint32_t size)
 }
 
 
-//FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)
-// Sets address (entire screen) and Sends Height*Width ammount of colour information to LCD
+// Put a pixel at selected location
+// Quite slow method, consider filling big areas instead (to reduce overhead of address setup)
+void ILI9341_Draw_Pixel(uint16_t x, uint16_t y, uint16_t colour)
+{
+    if ((x >=LCD_WIDTH) || (y >= LCD_HEIGHT)) return;
+    ILI9341_Set_Address(x, y, x + 1, y + 1);
+    unsigned char Temp_Buffer2[2] = {colour >> 8, colour};
+    ILI9341_SPI_Write_DataArray(Temp_Buffer2, 2);
+}
+
+
+// Fill whole screen with specified color
 void ILI9341_Fill_Screen(uint16_t colour)
 {
     ILI9341_Set_Address(0, 0, LCD_WIDTH, LCD_HEIGHT);
@@ -304,45 +304,8 @@ void ILI9341_Fill_Screen(uint16_t colour)
 }
 
 
-//DRAW PIXEL AT XY POSITION WITH SELECTED COLOUR
-//
-//Location is dependant on screen orientation. x0 and y0 locations change with orientations.
-//Using pixels to draw big simple structures is not recommended as it is really slow
-//Try using either rectangles or lines if possible
-//
-void ILI9341_Draw_Pixel(uint16_t x, uint16_t y, uint16_t colour)
-{
-    if ((x >=LCD_WIDTH) || (y >= LCD_HEIGHT)) return;	//OUT OF BOUNDS!
-	
-    //ADDRESS
-    ILI9341_SPI_Write_Command(0x2A);
-
-    //XDATA
-    unsigned char Temp_Buffer[4] = {x >> 8, x, (x + 1) >> 8, x + 1};
-    ILI9341_SPI_Write_DataArray(Temp_Buffer, 4);
-
-    //ADDRESS
-    ILI9341_SPI_Write_Command(0x2B);
-
-    //YDATA
-    unsigned char Temp_Buffer1[4] = {y >> 8, y, (y + 1) >> 8, y + 1};
-    ILI9341_SPI_Write_DataArray(Temp_Buffer1, 4);
-
-    //ADDRESS
-    ILI9341_SPI_Write_Command(0x2C);
-
-    //COLOUR
-    unsigned char Temp_Buffer2[2] = {colour >> 8, colour};
-    ILI9341_SPI_Write_DataArray(Temp_Buffer2, 2);
-}
-
-
-//DRAW RECTANGLE OF SET SIZE AND HEIGTH AT X and Y POSITION WITH CUSTOM COLOUR
-//
-//Rectangle is hollow. X and Y positions mark the upper left corner of rectangle
-//As with all other draw calls x0 and y0 locations dependant on screen orientation
-//
-void ILI9341_Draw_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour)
+// Fill a rectangle with specified color
+void ILI9341_Fill_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour)
 {
     if ((x >= LCD_WIDTH) || (y >= LCD_HEIGHT)) return;
     if ((x + width - 1) >= LCD_WIDTH)
@@ -358,7 +321,7 @@ void ILI9341_Draw_Rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t hei
 }
 
 
-//DRAW LINE FROM X,Y LOCATION to X+Width,Y LOCATION
+// Draw line (fast)
 void ILI9341_Draw_Horizontal_Line(uint16_t x, uint16_t y, uint16_t width, uint16_t Colour)
 {
     if ((x >= LCD_WIDTH) || (y >= LCD_HEIGHT)) return;
@@ -371,7 +334,7 @@ void ILI9341_Draw_Horizontal_Line(uint16_t x, uint16_t y, uint16_t width, uint16
 }
 
 
-//DRAW LINE FROM X,Y LOCATION to X,Y+Height LOCATION
+// Draw line (fast)
 void ILI9341_Draw_Vertical_Line(uint16_t x, uint16_t y, uint16_t height, uint16_t colour)
 {
     if ((x >= LCD_WIDTH) || (y >= LCD_HEIGHT)) return;

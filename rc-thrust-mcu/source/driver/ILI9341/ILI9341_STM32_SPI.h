@@ -32,11 +32,12 @@ extern "C"
 #endif // __cplusplus
     
     void ILI9341_SPI_Init(void);
-    void ILI9341_SPI_Send(uint8_t data);
-    void ILI9341_SPI_Write_Command(uint8_t command);
-    void ILI9341_SPI_Write_Data(uint8_t data);
-    void ILI9341_SPI_Write_DataArray(uint8_t *data, uint32_t count);
-    void ILI9341_Reset(void);
+    void ILI9341_SPI_SelectData(void);
+    void ILI9341_SPI_SelectCommand(void);
+    void ILI9341_SPI_Deselect(void);
+    void ILI9341_SPI_SendRaw(uint8_t *data, uint32_t count);
+    void ILI9341_HwReset(void);
+    void ILI9341_DelayMs(uint32_t ms);
 	
 #ifdef __cplusplus
 }
