@@ -2510,4 +2510,10 @@
     <file>
         <name>$PROJ_DIR$\..\..\source\stm32f1xx_it.c</name>
     </file>
+    <file>
+        <name>$PROJ_DIR$\..\..\source\utils.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\..\..\source\utils.h</name>
+    </file>
 </project>

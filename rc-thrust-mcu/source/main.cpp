@@ -6,7 +6,7 @@
 
 #include "ILI9341.h"
 #include "lcd_lib.h"
-
+#include "utils.h"
 
 SPI_HandleTypeDef hspi1;
 
@@ -94,6 +94,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
 
@@ -104,12 +117,51 @@ void Error_Handler(void)
 
 
 
+int32_t GetWeight(void) 
+{
+    uint8_t i = 0;
+    uint32_t adc_value = 0;
+
+    // PB12 - CLK (output)
+    // PB13 - DATA (input)
+
+    // Set CLK low
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+    // When data conversion is ready, DATA is set LOW by ADC
+    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) > 0);
+
+    for(i=0; i<24; i++)
+    {
+        // CLK pulse
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+        // Capture DATA
+        adc_value <<= 1;
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) > 0)
+            adc_value++;
+    }
+
+    // Channel A, gain = 128 => 25 CLK pulses total
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+    // Leave CLK high for power-down
+    //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+
+    // Sign - extend result
+    if (adc_value & (1 << 23))
+        adc_value += 0xFF000000;
+
+    return (int32_t)adc_value;
+}
+
+
   
   
 int main()
 {
     char str[50];
     int w_res;
+    float f_res;
     
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
@@ -123,51 +175,44 @@ int main()
     ILI9341_Init(SCREEN_HORIZONTAL_2);
     ILI9341_Fill_Screen(BLACK);
 
+    LCD_SetPenMode(PEN_SOLID);
+    LCD_SetAltPenMode(PEN_SOLID);
+
     while (1)
     {
-
-        LCD_SetPenMode(PEN_SOLID);
-        LCD_SetAltPenMode(PEN_SOLID);
-
         LCD_SetFont(&font_12x16_mono);
         LCD_SetPenColor(CL_GREEN);
         LCD_PrintString("Panel #1", 10, 0);
-        LCD_SetPenColor(CL_YELLOW);
-        LCD_PrintString("Panel #2", 10, 25);
-        LCD_SetPenColor(CL_RED);
-        LCD_PrintString("Panel #3", 10, 50);
-        LCD_SetPenColor(CL_BLUE);
-        LCD_PrintString("Panel #4", 10, 75);
 
-
-        LCD_SetFillColor(CL_CYAN);
-        LCD_FillRectWH(10, 100, 100, 100);
-
-
-        w_res = 123;
-          
         while(1)
         {
-            sprintf(str, "%05d", w_res);
-
+            w_res = GetWeight();
+//            //sprintf(str, "% 8d", w_res);
+//            sprintf(str, "%08d", w_res);
+//            //i32toa_align_right(w_res, str, 10, 8, -1);
+//            LCD_SetFont(&font_h48);
+//            LCD_SetPenColor(CL_GREEN);
+//            LCD_PrintString(str, 0, 20);
+            
+            f_res = (float)w_res / 100000;
+            f_res += 1.58;
+            f_res /= 4;
+            if (f_res >= 0)
+            {
+                str[0] = ' ';
+                sprintf(&str[1], "%.3f", f_res);
+            }
+            else
+            {
+                sprintf(&str[0], "%.3f", f_res);
+            }
             LCD_SetFont(&font_h48);
             LCD_SetPenColor(CL_GREEN);
-            LCD_PrintString(str, 150, 0);
+            LCD_PrintString(str, 0, 20);
+            
 
-            LCD_SetFont(&font_h48);
-            LCD_SetPenColor(CL_YELLOW);
-            LCD_PrintString(str, 150, 50);
-
-            LCD_SetFont(&font_h48);
-            LCD_SetPenColor(CL_RED);
-            LCD_PrintString(str, 150, 100);
-
-            LCD_SetFont(&font_h48);
-            LCD_SetPenColor(CL_BLUE);
-            LCD_PrintString(str, 150, 150);
 
             //HAL_Delay(100);
-            w_res++;
         }
     }
 	return 0;
