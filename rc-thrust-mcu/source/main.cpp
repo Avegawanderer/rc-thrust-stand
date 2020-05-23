@@ -9,6 +9,12 @@
 #include "utils.h"
 
 SPI_HandleTypeDef hspi1;
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
+
+
+extern "C" void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
+
 
 
 /**
@@ -19,8 +25,9 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -33,7 +40,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -43,6 +50,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -110,6 +123,78 @@ static void MX_GPIO_Init(void)
 }
 
 
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Common config
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;//ENABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 2;
+  hadc1.Init.NbrOfDiscConversion = 0;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_71CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Rank = ADC_REGULAR_RANK_2;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
+}
+
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+
+}
+
+
 void Error_Handler(void)
 {
     while(1);
@@ -155,11 +240,14 @@ int32_t GetWeight(void)
 }
 
 
-  
-  
+volatile uint8_t adcDone = 0;
+
+
+
 int main()
 {
     char str[50];
+    volatile uint16_t adc[2];
     int w_res;
     float f_res;
     
@@ -170,7 +258,12 @@ int main()
 	SystemClock_Config();
 
 	MX_GPIO_Init();
-	MX_SPI1_Init();
+	MX_DMA_Init();
+    MX_SPI1_Init();
+    MX_ADC1_Init();
+    
+
+    //HAL_ADCEx_Calibration_Start(&hadc1);
 
     ILI9341_Init(SCREEN_HORIZONTAL_2);
     ILI9341_Fill_Screen(BLACK);
@@ -178,6 +271,8 @@ int main()
     LCD_SetPenMode(PEN_SOLID);
     LCD_SetAltPenMode(PEN_SOLID);
 
+    //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc, 2); // стартуем АЦП
+    
     while (1)
     {
         LCD_SetFont(&font_12x16_mono);
@@ -209,12 +304,37 @@ int main()
             LCD_SetFont(&font_h48);
             LCD_SetPenColor(CL_GREEN);
             LCD_PrintString(str, 0, 20);
-            
+/*
+            HAL_ADC_Start(&hadc1);
+            HAL_ADC_PollForConversion(&hadc1, 100);
+            adc1 = HAL_ADC_GetValue(&hadc1);
+            HAL_ADC_Start(&hadc1);
+            HAL_ADC_PollForConversion(&hadc1, 100);
+            adc2 = HAL_ADC_GetValue(&hadc1);
+            HAL_ADC_Stop(&hadc1);
+  */
+            adcDone = 0;
+            HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc, 2); // стартуем АЦП
+            while(!adcDone);
+
+            LCD_SetFont(&font_12x16_mono);
+            LCD_SetPenColor(CL_YELLOW);
+            sprintf(str, "PB[0] % 8d", adc[0]);
+            LCD_PrintString(str, 0, 120);
+            sprintf(str, "PB[1] % 8d", adc[1]);
+            LCD_PrintString(str, 0, 136);
 
 
             //HAL_Delay(100);
         }
     }
 	return 0;
+}
+
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    //HAL_ADC_Stop_DMA(&hadc1);
+    adcDone = 1;
 }
 

@@ -371,7 +371,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -380,7 +380,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -2139,6 +2139,12 @@
             <name>STM32F1xx_HAL_Driver</name>
             <file>
                 <name>$PROJ_DIR$\..\..\library\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\library\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\library\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc_ex.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\library\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c</name>

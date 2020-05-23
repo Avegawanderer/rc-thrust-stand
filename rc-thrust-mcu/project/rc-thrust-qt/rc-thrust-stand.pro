@@ -16,6 +16,8 @@ HEADERS = \
     ../../library/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+    ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h \
+    ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc_ex.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h \
     ../../library/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h \
@@ -45,6 +47,8 @@ HEADERS = \
 SOURCES = \
     ../../library/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
+    ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c \
+    ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c \
     ../../library/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
